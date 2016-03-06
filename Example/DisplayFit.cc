@@ -159,6 +159,16 @@ void DisplayFit()
   tdrStyle->cd();
   tdrStyle->SetOptStat(0);
   
+  TPave *box1=new TPave(0.18, 0.72, 0.4, 0.68, 4, "NDC");
+  box1->SetLineColor(kRed);
+  box1->SetLineWidth(3);
+  box1->SetFillStyle(0);
+  
+  TPave *box2=new TPave(0.18, 0.635, 0.4, 0.595, 4, "NDC");
+  box2->SetLineColor(kRed);
+  box2->SetLineWidth(3);
+  box2->SetFillStyle(0);
+  
   TCanvas *c=new TCanvas("c", "c", 700, 700);
   h->SetMaximum(h->GetMaximum()*1.2);
   h->Draw("Ep9");
@@ -168,6 +178,8 @@ void DisplayFit()
   l_hi->Draw("same");
   leg->Draw();
   leg2->Draw();
+  box1->Draw();
+  box2->Draw();
   c->SaveAs("c.png");
   c->SaveAs("c.pdf");
   
@@ -181,6 +193,8 @@ void DisplayFit()
   l_hi->Draw("same");
   leg->Draw();
   leg2->Draw();
+  box1->Draw();
+  box2->Draw();
   h->Draw("Ep9 same");
   f_expGaussExp->Draw("same");
   c_log->SaveAs("c_log.png");

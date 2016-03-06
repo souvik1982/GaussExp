@@ -8,6 +8,14 @@
 
 #include "TDRStyle.h"
 
+std::string itoa(int i) 
+{
+  char res[10];
+  sprintf(res, "%d", i);
+  std::string ret(res);
+  return ret;
+}
+
 std::string ftoa0(double i) 
 {
   char res[10];
@@ -24,11 +32,19 @@ std::string ftoa2(double i)
   return ret;
 }
 
-std::string ftoa3(double i) 
+std::string legendString(double n, double dn)
 {
-  char res[10];
-  sprintf(res, "%2.3f", i);
-  std::string ret(res);
+  int decplace=0;
+  double dn_temp=dn;
+  while (fabs(dn_temp)<1)
+  {
+    ++decplace;
+    dn_temp=dn_temp*10.;
+  }
+  char n_c[10], dn_c[10];
+  sprintf(n_c, ("%."+itoa(decplace)+"f").c_str(), n);
+  sprintf(dn_c, ("%."+itoa(decplace)+"f").c_str(), dn);
+  std::string ret=std::string(n_c)+" #pm "+std::string(dn_c);
   return ret;
 }
 
@@ -66,7 +82,7 @@ Double_t GaussExp(Double_t *x, Double_t *par)
   return result;
 }
 
-void ThrowAndCatch()
+void ThrowAndCatch(double nThrows)
 {
   TF1 *f_parent=new TF1("f_parent", GaussExp, 0, 30, 4);
   f_parent->SetParameter(0, 5);
@@ -78,9 +94,17 @@ void ThrowAndCatch()
   h_distribution->GetYaxis()->SetTitleOffset(1.4);
   h_distribution->SetLineColor(kBlack);
   h_distribution->SetMarkerStyle(20);
-  double nThrows=1e3;
+  // double nThrows=1e6;
   for (unsigned int i=0; i<nThrows; ++i)
      h_distribution->Fill(f_parent->GetRandom());
+     
+  bool fitFailed=false;
+  std::string index;
+  std::string filestring;
+  if (nThrows==1e3) {index="a"; filestring="1e3";}
+  if (nThrows==1e4) {index="b"; filestring="1e4";}
+  if (nThrows==1e5) {fitFailed=true; index="c"; filestring="1e5";}
+  if (nThrows==1e6) {fitFailed=true; index="d"; filestring="1e6";}
      
   TF1 *f_crystalBall=new TF1("f_crystalBall", crystalBall, 0, 30, 5);
   f_crystalBall->SetParLimits(0, 3.1, 7.1);   // mean
@@ -112,34 +136,45 @@ void ThrowAndCatch()
   double fit_NDF=f_gaussExp->GetNDF();
   std::cout<<"GaussExp fit_chi2/NDF = "<<fit_chi2/fit_NDF<<std::endl;
   
-  TLegend *leg=new TLegend(0.89, 0.89, 0.60, 0.65);
+  TLegend *leg=new TLegend(0.89, 0.89, 0.60, 0.60);
   leg->SetFillStyle(1);
   leg->SetFillColor(kWhite); 
   leg->SetLineColor(kWhite);
   leg->AddEntry(f_gaussExp, "GaussExp Fit", "L");
-  leg->AddEntry((TObject*)0, ("#bar{x} = "+ftoa2(fit_mean)+" #pm "+ftoa2(fit_mean_error)+" GeV").c_str(), "");
-  leg->AddEntry((TObject*)0, ("#sigma = "+ftoa2(fit_std)+" #pm "+ftoa2(fit_std_error)+" GeV").c_str(), "");
-  leg->AddEntry((TObject*)0, ("k = "+ftoa2(fit_kH)+" #pm "+ftoa2(fit_kH_error)).c_str(), "");
+  leg->AddEntry((TObject*)0, ("#bar{x} = "+legendString(fit_mean, fit_mean_error)+" GeV").c_str(), "");
+  leg->AddEntry((TObject*)0, ("#sigma = "+legendString(fit_std, fit_std_error)+" GeV").c_str(), "");
+  leg->AddEntry((TObject*)0, ("k = "+legendString(fit_kH, fit_kH_error)).c_str(), "");
   leg->AddEntry((TObject*)0, ("#chi^{2}/NDF = "+ftoa2(fit_chi2/fit_NDF)).c_str(), "");
   
-  TLegend *leg2=new TLegend(0.26, 0.89, 0.55, 0.65);
+  TLegend *leg2=new TLegend(0.6, 0.89, 0.33, 0.60);
   leg2->SetFillStyle(1); 
   leg2->SetFillColor(kWhite); 
   leg2->SetLineColor(kWhite);
   leg2->AddEntry(f_crystalBall, "Crystal Ball Fit", "L");
-  leg2->AddEntry((TObject*)0, ("#bar{x} = "+ftoa2(cb_mean)+" #pm "+ftoa2(cb_mean_error)+" GeV").c_str(), "");
-  leg2->AddEntry((TObject*)0, ("#sigma = "+ftoa2(cb_std)+" #pm "+ftoa2(cb_std_error)+" GeV").c_str(), "");
-  leg2->AddEntry((TObject*)0, ("#alpha = "+ftoa2(cb_alpha1)+" #pm "+ftoa2(cb_alpha1_error)).c_str(), "");
-  leg2->AddEntry((TObject*)0, ("n = "+ftoa0(cb_n1)+" #pm "+ftoa0(cb_n1_error)).c_str(), "");
+  leg2->AddEntry((TObject*)0, ("#bar{x} = "+legendString(cb_mean, cb_mean_error)+" GeV").c_str(), "");
+  leg2->AddEntry((TObject*)0, ("#sigma = "+legendString(cb_std, cb_std_error)+" GeV").c_str(), "");
+  leg2->AddEntry((TObject*)0, ("#alpha = "+legendString(cb_alpha1, cb_alpha1_error)).c_str(), "");
+  leg2->AddEntry((TObject*)0, ("n = "+legendString(cb_n1, cb_n1_error)).c_str(), "");
   leg2->AddEntry((TObject*)0, ("#chi^{2}/NDF = "+ftoa2(cb_chi2/cb_NDF)).c_str(), "");
   
-  TLegend *leg3=new TLegend(0.50, 0.60, 0.89, 0.45);
+  TLegend *leg3=new TLegend(0.55, 0.57, 0.89, 0.42);
   leg3->SetFillStyle(1); 
-  // leg3->SetFillColor(kWhite); 
+  leg3->SetFillColor(kWhite); 
   leg3->SetLineColor(kWhite);
-  leg3->AddEntry((TObject*)0, ("            (a)"), "");
+  leg3->AddEntry((TObject*)0, ("            ("+index+")").c_str(), "");
   leg3->AddEntry((TObject*)0, ((ftoa0(nThrows)+" data points").c_str()), "");
   
+  TLegend *leg4=new TLegend(0.15, 0.25, 0.55, 0.5);
+  leg4->SetFillStyle(1); 
+  leg4->SetFillColor(kWhite); 
+  leg4->SetLineColor(kWhite);
+  leg4->AddEntry((TObject*)0, "Crystal Ball fit FAILED", "");
+  
+  TPave *box=new TPave(0.33, 0.69, 0.6, 0.65, 4, "NDC");
+  box->SetLineColor(kRed);
+  box->SetLineWidth(3);
+  box->SetFillStyle(0);
+    
   gROOT->SetStyle("Plain");
   TStyle *tdrStyle=setTDRStyle();
   tdrStyle->cd();
@@ -160,8 +195,10 @@ void ThrowAndCatch()
   leg->Draw();
   leg2->Draw();
   leg3->Draw();
-  c_distribution->SaveAs("c_distribution.png");
-  c_distribution->SaveAs("c_distribution.pdf");
+  // if (fitFailed) leg4->Draw();
+  box->Draw();
+  c_distribution->SaveAs(("c_distribution_"+filestring+".png").c_str());
+  c_distribution->SaveAs(("c_distribution_"+filestring+".pdf").c_str());
 }
   
   

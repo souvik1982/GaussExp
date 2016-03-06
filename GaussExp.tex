@@ -2,6 +2,7 @@
 \usepackage{hyperref}
 \usepackage{graphicx}
 \usepackage{float}
+\usepackage[margin=1.4in]{geometry}
 \usepackage[utf8]{inputenc}
 
 \begin{document}
@@ -12,7 +13,7 @@
 \maketitle
 
 \begin{abstract}
-We present a simple alternative to the Crystal Ball function that has an exponential tail stitched to a Gaussian core. It has one parameter less than the Crystal Ball function and, where appropriate, offers more stable fits to peaks that continue into exponential tails. The function may also be extended with two exponential tails on each side of the Gaussian, and this has two parameters less than the corresponding double-shouldered Crystal Ball function. This function may be of versatile use in experimental physics and other fields.
+We present a simple alternative to the Crystal Ball function that has an exponential tail stitched to a Gaussian core. It has one parameter less than the Crystal Ball function and, where appropriate, offers more stable fits to peaks that continue into exponential tails. The function may also be extended with two exponential tails on each side of the Gaussian, and this has two parameters less than the corresponding double-shouldered Crystal Ball function. This function has been used to model background and signal processes in a recent Higgs pair production search and may be of versatile use in experimental physics and other fields.
 \end{abstract}
 
 \bigskip
@@ -62,7 +63,7 @@ This section contains an example of an exponentially falling distribution fit wi
 
 There may occur natural processes that are characterized in some variable with a turn-on region that merges into an exponentially falling tail. If the turn-on region is sufficiently well modeled with a Gaussian, modeling the tail with a power-law would not be appropriate and would result in unstable fits and uncertainties on the parameters of the fit. We demonstrate this here with 1,000, 10,000, 100,000 and 1,000,000 random data points thrown within 0 and 30 from the GaussExp function with $\bar{x} =$ 5, $\sigma =$ 1 and $k =$ 0.5. Each of these distributions shown in Fig.~\ref{fig:ThrowCatch} are fitted by maximum likelihood to both the Crystal Ball function and the GaussExp function using the MINUIT fitting program~\cite{JAMES1975343} within the ROOT framework~\cite{Antcheva20092499}.
 
-With 1,000 throws shown in Fig.~\ref{fig:ThrowCatch}a, MINUIT converges with both the Crystal Ball and GaussExp fits and reports a similar $\chi^2/NDF$. The Crystal Ball exponent $n$, however, is returned with a 60\% uncertainty. With 10,000 throws shown in Fig.~\ref{fig:ThrowCatch}b, the fitter still converges with the Crystal Ball function but reports a worse $\chi^2/NDF$ than the fit with the GaussExp function. $n$ is returned with an 86\% uncertainty and this indicates that the Crystal Ball function is poorly constrained. With 100,000 throws shown in Fig.~\ref{fig:ThrowCatch}c, the fits of the Crystal Ball and GaussExp functions look similar by eye but the fitter reports a failure with the Crystal Ball function. The Crystal Ball $n$ is returned as 127 with an uncertainty of 40. Expressions like $n^n$ in Eq.~\ref{eq:CrystalBall} for the Crystal Ball function make for an irregular likelihood function for high values of $n$ and this is the reason the fitter fails to find a stable maximum. With 1,000,000 throws shown in Fig.~\ref{fig:ThrowCatch}d, the fitter fails with the Crystal Ball function. The $n$ is returned as 113 $\pm$ 9. A fit parameter that depends so sensitively on the number of events in the distribution cannot be said to characterize the distribution. 
+With 1,000 throws shown in Fig.~\ref{fig:ThrowCatch}a, MINUIT converges with both the Crystal Ball and GaussExp fits and reports a similar $\chi^2/NDF$. The Crystal Ball exponent $n$, however, is returned with a 60\% uncertainty. With 10,000 throws shown in Fig.~\ref{fig:ThrowCatch}b, the fitter still converges with the Crystal Ball function but reports a worse $\chi^2/NDF$ than the fit with the GaussExp function. $n$ is returned with an 86\% uncertainty and this indicates that the Crystal Ball function is poorly constrained. With 100,000 throws shown in Fig.~\ref{fig:ThrowCatch}c, the fits of the Crystal Ball and GaussExp functions look similar by eye but the fitter reports a failure with the Crystal Ball function. The Crystal Ball $n$ is returned as 127 with an uncertainty of 40. Expressions like $n^n$ in Eq.~\ref{eq:CrystalBall} for the Crystal Ball function make for an irregular likelihood function for high values of $n$ and this is the reason the fitter fails to find a stable maximum. With 1,000,000 throws shown in Fig.~\ref{fig:ThrowCatch}d, the fitter fails with the Crystal Ball function. The $n$ is returned as 113 $\pm$ 9. A fit parameter that depends so sensitively on the number of events in the distribution cannot be said to characterize the distribution.
 
 The GaussExp fit, on the other hand, converges every time and returns fit parameters with small uncertainties that are consistent with the parameters of the parent distribution in these examples.
 
